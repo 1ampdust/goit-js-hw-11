@@ -118,5 +118,3 @@ function check(current, total) {
   Notiflix.Notify.success(`Hooray! We found ${currentSum} of ${total} images`);
   loadMore.style.display = 'block';
 }
-
-//я почав робити для кожної функції окремий файл, але щось не вийшло(
