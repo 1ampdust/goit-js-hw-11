@@ -6,7 +6,7 @@ const gallery = document.querySelector('.gallery');
 const loadMore = document.querySelector('.load-more');
 let page = 1;
 let searchValue;
-let per_page = 20;
+let per_page = 40;
 loadMore.style.display = 'none';
 
 searchForm.addEventListener('submit', handleSubmit);
@@ -34,7 +34,6 @@ async function search() {
   try {
     const data = await searchingSystem(page, per_page);
     if (data.data.totalHits === 0) {
-      Notiflix.Notify.failure('Qui timide rogat docet negare');
       loadMore.style.display = 'none';
     } else {
       loadMore.style.display = 'block';
@@ -44,9 +43,6 @@ async function search() {
     }
     if (per_page >= data.data.totalHits) {
       loadMore.style.display = 'none';
-      Notiflix.Notify.failure(
-        "We're sorry, but you've reached the end of search results."
-      );
     }
     gallery.innerHTML = createMarkup(data.data.hits);
   } catch (error) {
