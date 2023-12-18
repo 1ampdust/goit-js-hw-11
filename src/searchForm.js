@@ -7,6 +7,7 @@ const loadMore = document.querySelector('.load-more');
 let page = 1;
 let searchValue;
 let per_page = 40;
+let currentSum = 0; // Добавлено для подсчета загруженных изображений
 loadMore.style.display = 'none';
 
 searchForm.addEventListener('submit', handleSubmit);
@@ -26,6 +27,7 @@ function handleClick() {
     .then(data => {
       console.log(data.data.hits);
       gallery.insertAdjacentHTML('beforeend', createMarkup(data.data.hits));
+      check(data.data.hits.length, data.data.totalHits);
     })
     .catch(error => console.log(error));
 }
@@ -37,14 +39,9 @@ async function search() {
       loadMore.style.display = 'none';
     } else {
       loadMore.style.display = 'block';
-      Notiflix.Notify.success(
-        `Hooray! We found ${data.data.totalHits} images.`
-      );
-    }
-    if (per_page >= data.data.totalHits) {
-      loadMore.style.display = 'none';
     }
     gallery.innerHTML = createMarkup(data.data.hits);
+    check(data.data.hits.length, data.data.totalHits);
   } catch (error) {
     console.log(error);
   }
@@ -70,12 +67,14 @@ async function searchingSystem(page = 1) {
     if (q === '') {
       return;
     }
+
     if (per_page >= results.data.hits) {
       loadMore.style.display = 'none';
       Notiflix.Notify.failure(
         "We're sorry, but you've reached the end of search results."
       );
     }
+
     return results;
   } catch (error) {
     console.log(error);
@@ -85,15 +84,7 @@ async function searchingSystem(page = 1) {
 function createMarkup(arr) {
   return arr
     .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => `
+      ({ webformatURL, tags, likes, views, comments, downloads }) => `
     <div class="photo-card">
 <img class="imag-card" src="${webformatURL}" alt="${tags}" loading="lazy"/>
 <div class="info">
@@ -114,4 +105,14 @@ function createMarkup(arr) {
     `
     )
     .join('');
+}
+
+function check(current, total) {
+  currentSum += current;
+  if (currentSum >= total) {
+    loadMore.style.display = 'none';
+    return Notiflix.Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
+  }
 }
