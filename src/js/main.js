@@ -1,5 +1,5 @@
-import searchingSystem from './search';
-import { createMarkup, check } from './gallery';
+import axios from 'axios';
+import Notiflix from 'notiflix';
 
 const searchForm = document.querySelector('.search-form');
 const gallery = document.querySelector('.gallery');
@@ -9,8 +9,8 @@ let searchValue;
 let per_page = 40;
 let currentSum = 0;
 loadMore.style.display = 'none';
-searchForm.addEventListener('submit', handleSubmit);
 
+searchForm.addEventListener('submit', handleSubmit);
 function handleSubmit(event) {
   event.preventDefault();
   page = 1;
@@ -23,26 +23,98 @@ function handleSubmit(event) {
 
 function handleClick() {
   page += 1;
-  searchingSystem(page, searchValue, per_page)
+  searchingSystem(page)
     .then(data => {
       console.log(data.data.hits);
       gallery.insertAdjacentHTML('beforeend', createMarkup(data.data.hits));
-      check(data.data.hits.length, data.data.totalHits, loadMore, currentSum);
+      check(data.data.hits.length, data.data.totalHits);
     })
     .catch(error => console.log(error));
 }
 
 async function search() {
   try {
-    const data = await searchingSystem(page, searchValue, per_page);
+    const data = await searchingSystem(page, per_page);
     if (data.data.totalHits === 0) {
       loadMore.style.display = 'none';
     } else {
       loadMore.style.display = 'block';
     }
     gallery.innerHTML = createMarkup(data.data.hits);
-    check(data.data.hits.length, data.data.totalHits, loadMore, currentSum);
+    check(data.data.hits.length, data.data.totalHits);
   } catch (error) {
     console.log(error);
   }
+}
+
+async function searchingSystem(page = 1) {
+  const BASE_URL = 'https://pixabay.com/api/';
+  const key = '41168195-d63dcd7c5ed901c12bfe9d8da';
+  const q = searchValue;
+
+  try {
+    const results = await axios.get(`${BASE_URL}`, {
+      params: {
+        key,
+        q,
+        image_type: 'photo',
+        orientation: 'horizontal',
+        safesearch: true,
+        page: page,
+        per_page,
+      },
+    });
+    if (q === '') {
+      return;
+    }
+
+    if (per_page >= results.data.hits) {
+      loadMore.style.display = 'none';
+      Notiflix.Notify.failure(
+        "We're sorry, but you've reached the end of search results."
+      );
+    }
+
+    return results;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function createMarkup(arr) {
+  return arr
+    .map(
+      ({ webformatURL, tags, likes, views, comments, downloads }) => `
+    <div class="photo-card">
+<img class="imag-card" src="${webformatURL}" alt="${tags}" loading="lazy"/>
+<div class="info">
+<p class="info-item">
+  <b>Likes: ${likes}</b>
+</p>
+<p class="info-item">
+  <b>Views: ${views}</b>
+</p>
+<p class="info-item">
+  <b>Comments: ${comments}</b>
+</p>
+<p class="info-item">
+  <b>Downloads: ${downloads}</b>
+</p>
+</div>
+</div>
+    `
+    )
+    .join('');
+}
+
+function check(current, total) {
+  currentSum += current;
+  if (currentSum >= total) {
+    loadMore.style.display = 'none';
+    return Notiflix.Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
+  }
+  Notiflix.Notify.success(`Hooray! We found ${currentSum} of ${total} images`);
+  loadMore.style.display = 'block';
 }
