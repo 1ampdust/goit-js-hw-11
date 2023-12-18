@@ -1,0 +1,123 @@
+* {
+  padding: 10px;
+}
+
+.search-form {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  column-gap: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid black;
+}
+
+.container {
+  width: 350px;
+  height: 50px;
+  background-color: #1e272e;
+  border-radius: 4rem;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.search__box {
+  float: left;
+  width: 0;
+  height: 4rem;
+  background: none;
+  color: #f7f7f7;
+  font-size: 1.5rem;
+  border-radius: 2rem;
+  outline: none;
+  border: none;
+  position: relative;
+  opacity: 1;
+  transition: all 0.75s ease-in;
+  cursor: pointer;
+}
+
+.container:hover > .search__box {
+  width: 85%;
+  padding: 0 1rem;
+}
+
+.btn-search {
+  border: 2px solid orange;
+  border-radius: 15px;
+  background-color: transparent;
+  padding: 5px 8px;
+  color: orange;
+}
+
+.btn-search:hover,
+.btn-search:focus {
+  background-color: orange;
+  color: black;
+}
+
+.gallery {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.photo-card {
+  border-top: transparent;
+  border: 1px solid black;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .photo-card {
+    width: calc((100% - 70px) / 2);
+  }
+}
+.imag-card {
+  width: 100%;
+  height: 100%;
+  border: 1px solid black;
+  padding: 0;
+}
+
+.load-more {
+  border: 2px solid black;
+  border-radius: 15px;
+  background-color: transparent;
+  padding: 5px 8px;
+  color: black;
+  margin: auto;
+}
+
+.load-more:hover,
+.load-more:focus {
+  background-color: black;
+  color: white;
+  transition: color 500ms ease-in-out, background-color 250ms ease-in-out;
+}
+
+.info-item {
+  color: orange;
+  font-family: 'Lobster';
+}
+
+.link-card {
+  display: block;
+  text-decoration: none;
+  height: 100%;
+}
+
+.link-card:hover {
+  cursor: zoom-in;
+}
+
+.info {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
