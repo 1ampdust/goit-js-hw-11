@@ -79,7 +79,7 @@ async function searchingSystem(page = 1) {
       return;
     }
 
-    if (results.data.hits.length > 0) {
+    if (results.data.hits.length === 0) {
       loadMore.style.display = 'none';
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
