@@ -11,6 +11,7 @@ let currentSum = 0;
 loadMore.style.display = 'none';
 
 searchForm.addEventListener('submit', handleSubmit);
+
 function handleSubmit(event) {
   event.preventDefault();
   page = 1;
@@ -42,6 +43,7 @@ async function handleClick() {
 
 async function search() {
   try {
+    currentSum = 0; // Обнуляем currentSum при новом поиске
     const data = await searchingSystem(page, per_page);
     if (data.data.totalHits === 0) {
       loadMore.style.display = 'none';
@@ -72,11 +74,12 @@ async function searchingSystem(page = 1) {
         per_page,
       },
     });
+
     if (q === '') {
       return;
     }
 
-    if (per_page >= results.data.hits) {
+    if (results.data.hits.length === 0) {
       loadMore.style.display = 'none';
       Notiflix.Notify.failure(
         "We're sorry, but you've reached the end of search results."
@@ -94,22 +97,22 @@ function createMarkup(arr) {
     .map(
       ({ webformatURL, tags, likes, views, comments, downloads }) => `
     <div class="photo-card">
-<img class="imag-card" src="${webformatURL}" alt="${tags}" loading="lazy"/>
-<div class="info">
-<p class="info-item">
-  <b>Likes: ${likes}</b>
-</p>
-<p class="info-item">
-  <b>Views: ${views}</b>
-</p>
-<p class="info-item">
-  <b>Comments: ${comments}</b>
-</p>
-<p class="info-item">
-  <b>Downloads: ${downloads}</b>
-</p>
-</div>
-</div>
+      <img class="imag-card" src="${webformatURL}" alt="${tags}" loading="lazy"/>
+      <div class="info">
+        <p class="info-item">
+          <b>Likes: ${likes}</b>
+        </p>
+        <p class="info-item">
+          <b>Views: ${views}</b>
+        </p>
+        <p class="info-item">
+          <b>Comments: ${comments}</b>
+        </p>
+        <p class="info-item">
+          <b>Downloads: ${downloads}</b>
+        </p>
+      </div>
+    </div>
     `
     )
     .join('');
