@@ -43,7 +43,7 @@ async function handleClick() {
 
 async function search() {
   try {
-    currentSum = 0; // Обнуляем currentSum при новом поиске
+    currentSum = 0;
     const data = await searchingSystem(page, per_page);
     if (data.data.totalHits === 0) {
       loadMore.style.display = 'none';
@@ -56,6 +56,8 @@ async function search() {
     console.log(error);
   }
 }
+
+let errorOccurred = false;
 
 async function searchingSystem(page = 1) {
   const BASE_URL = 'https://pixabay.com/api/';
@@ -79,16 +81,25 @@ async function searchingSystem(page = 1) {
       return;
     }
 
-    if (results.data.hits.length === 0) {
+    if (results.data.totalHits === 0) {
       loadMore.style.display = 'none';
-      Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
+      if (!errorOccurred) {
+        errorOccurred = true;
+        Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      }
     }
 
     return results;
   } catch (error) {
     console.log(error);
+    if (!errorOccurred) {
+      errorOccurred = true;
+      Notiflix.Notify.failure(
+        'An error occurred during the search. Please try again later.'
+      );
+    }
   }
 }
 
