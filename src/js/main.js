@@ -81,23 +81,14 @@ async function searchingSystem(page = 1) {
 
     if (results.data.hits.length === 0) {
       loadMore.style.display = 'none';
-      if (results.data.totalHits === 0) {
-        Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-      } else {
-        Notiflix.Notify.failure(
-          'An error occurred during the search. Please try again later.'
-        );
-      }
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
     }
 
     return results;
   } catch (error) {
     console.log(error);
-    Notiflix.Notify.failure(
-      'An error occurred during the search. Please try again later.'
-    );
   }
 }
 
