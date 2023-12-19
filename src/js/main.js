@@ -11,12 +11,20 @@ let currentSum = 0;
 loadMore.style.display = 'none';
 
 searchForm.addEventListener('submit', handleSubmit);
+
 function handleSubmit(event) {
   event.preventDefault();
   page = 1;
 
   const { searchQuery } = event.currentTarget.elements;
-  searchValue = searchQuery.value;
+  searchValue = searchQuery.value.trim();
+
+  if (searchValue === '') {
+    loadMore.style.display = 'none';
+    Notiflix.Notify.failure('All fields must be filled!');
+    return;
+  }
+
   loadMore.addEventListener('click', handleClick);
   search();
 }
@@ -35,6 +43,11 @@ async function handleClick() {
 
 async function search() {
   try {
+    if (!searchValue) {
+      // Если строка поиска пуста, просто возвращаемся
+      return;
+    }
+
     const data = await searchingSystem(page, per_page);
     if (data.data.totalHits === 0) {
       loadMore.style.display = 'none';
