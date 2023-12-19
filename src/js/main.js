@@ -16,7 +16,14 @@ function handleSubmit(event) {
   page = 1;
 
   const { searchQuery } = event.currentTarget.elements;
-  searchValue = searchQuery.value;
+  searchValue = searchQuery.value.trim();
+
+  if (searchValue === '') {
+    loadMore.style.display = 'none';
+    Notiflix.Notify.failure('All fields must be filled!');
+    return;
+  }
+
   loadMore.addEventListener('click', handleClick);
   search();
 }
