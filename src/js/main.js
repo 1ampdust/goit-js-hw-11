@@ -11,25 +11,34 @@ let currentSum = 0;
 loadMore.style.display = 'none';
 
 searchForm.addEventListener('submit', handleSubmit);
+
 function handleSubmit(event) {
   event.preventDefault();
   page = 1;
 
   const { searchQuery } = event.currentTarget.elements;
-  searchValue = searchQuery.value;
+  searchValue = searchQuery.value.trim();
+
+  if (searchValue === '') {
+    loadMore.style.display = 'none';
+    Notiflix.Notify.failure('All fields must be filled!');
+    return;
+  }
+
   loadMore.addEventListener('click', handleClick);
   search();
 }
 
-function handleClick() {
-  page += 1;
-  searchingSystem(page)
-    .then(data => {
-      console.log(data.data.hits);
-      gallery.insertAdjacentHTML('beforeend', createMarkup(data.data.hits));
-      check(data.data.hits.length, data.data.totalHits);
-    })
-    .catch(error => console.log(error));
+async function handleClick() {
+  try {
+    page += 1;
+    const data = await searchingSystem(page);
+    console.log(data.data.hits);
+    gallery.insertAdjacentHTML('beforeend', createMarkup(data.data.hits));
+    check(data.data.hits.length, data.data.totalHits);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function search() {
