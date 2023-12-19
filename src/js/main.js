@@ -46,24 +46,17 @@ async function search() {
     currentSum = 0;
     const data = await searchingSystem(page, per_page);
 
-    if (!data) {
-      loadMore.style.display = 'none';
-      Notiflix.Notify.failure(
-        'Sorry, there was an error with your search query. Please try again.'
-      );
-      return;
-    }
-
     if (data.data.totalHits === 0) {
       loadMore.style.display = 'none';
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
-    } else {
-      loadMore.style.display = 'block';
-      gallery.innerHTML = createMarkup(data.data.hits);
-      check(data.data.hits.length, data.data.totalHits);
+      return;
     }
+
+    loadMore.style.display = 'block';
+    gallery.innerHTML = createMarkup(data.data.hits);
+    check(data.data.hits.length, data.data.totalHits);
   } catch (error) {
     console.log(error);
   }
