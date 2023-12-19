@@ -43,15 +43,27 @@ async function handleClick() {
 
 async function search() {
   try {
-    currentSum = 0; // Обнуляем currentSum при новом поиске
+    currentSum = 0;
     const data = await searchingSystem(page, per_page);
+
+    if (!data) {
+      loadMore.style.display = 'none';
+      Notiflix.Notify.failure(
+        'Sorry, there was an error with your search query. Please try again.'
+      );
+      return;
+    }
+
     if (data.data.totalHits === 0) {
       loadMore.style.display = 'none';
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
     } else {
       loadMore.style.display = 'block';
+      gallery.innerHTML = createMarkup(data.data.hits);
+      check(data.data.hits.length, data.data.totalHits);
     }
-    gallery.innerHTML = createMarkup(data.data.hits);
-    check(data.data.hits.length, data.data.totalHits);
   } catch (error) {
     console.log(error);
   }
@@ -76,7 +88,7 @@ async function searchingSystem(page = 1) {
     });
 
     if (q === '') {
-      return;
+      return null;
     }
 
     if (results.data.hits.length === 0) {
@@ -88,7 +100,12 @@ async function searchingSystem(page = 1) {
 
     return results;
   } catch (error) {
+    loadMore.style.display = 'none';
+    Notiflix.Notify.failure(
+      'Sorry, there was an error with your search query. Please try again.'
+    );
     console.log(error);
+    return null;
   }
 }
 
